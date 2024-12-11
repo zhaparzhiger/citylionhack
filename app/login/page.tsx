@@ -10,21 +10,6 @@ import loginImage from "@/public/images/vnos.jpg";
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const login = formData.get('login') as string
-    const password = formData.get('password') as string
-
-    if (login === 'admin' && password === '123') {
-      // Устанавливаем cookie для аутентификации
-      document.cookie = "isLoggedIn=true; path=/;"
-      // Перенаправляем на главную страницу
-      window.location.href = '/'
-    } else {
-      setError("Неверный логин или пароль. Пожалуйста, проверьте введенные данные.")
-    }
-  }
 
   return (
     <div className="flex min-h-screen">
