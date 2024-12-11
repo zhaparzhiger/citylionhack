@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Добавьте тег для favicon */}
-        <link rel="icon" href="/lionugu.svg" />
+                <link rel="icon" href="/lionugu.svg" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
