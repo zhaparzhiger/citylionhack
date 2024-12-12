@@ -1,4 +1,5 @@
 import { CategoryPage } from "@/components/category-page"
+import { getAllNews } from "@/lib/services/news.service"
 
 const newsItems = [
   { id: "1", title: "Ремонт дороги на ул. Ленина", description: "Ремонтные работы продлятся до конца месяца", date: "2023-06-10" },
@@ -6,7 +7,15 @@ const newsItems = [
   { id: "3", title: "Открытие нового парка", description: "Торжественное открытие состоится в эту субботу", date: "2023-06-18" },
 ]
 
-export default function NewsPage() {
-  return <CategoryPage title="Новости" items={newsItems} />
+export default async function NewsPage() {
+  const news = await getAllNews() 
+
+  const formattedNews = news.map((event) => ({
+    ...event,
+    date: event.date.toISOString(), 
+  }));
+
+
+  return <CategoryPage title="Новости" items={formattedNews} />
 }
 

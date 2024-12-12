@@ -1,4 +1,5 @@
 import { CategoryPage } from "@/components/category-page"
+import { getAllParkings } from "@/lib/services/parking.service"
 
 const parkingItems = [
   { id: "1", title: "Парковка на Центральной площади", description: "50 мест, платная", spaces: 50 },
@@ -6,7 +7,12 @@ const parkingItems = [
   { id: "3", title: "Подземная парковка", description: "200 мест, охраняемая", spaces: 200 },
 ]
 
-export default function ParkingPage() {
-  return <CategoryPage title="Парковки" items={parkingItems} />
+export default async function ParkingPage() {
+  const parkings = await getAllParkings()
+  const formattedNews = parkings.map((event) => ({
+    ...event,
+  }));
+
+  return <CategoryPage title="Парковки" items={formattedNews} />
 }
 
