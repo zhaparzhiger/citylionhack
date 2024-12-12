@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  PAID       // Платная парковка
+  FREE       // Бесплатная парковка
+}
+
+model Parking {
+  id          Int      @id @default(autoincrement()) 
+  title       String   
+  spots       Int     
+  status      Status   
+  guarded     Boolean  
+}
+
 model News {
   id          Int      @id @default(autoincrement())
   title       String
