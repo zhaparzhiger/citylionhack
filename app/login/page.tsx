@@ -1,5 +1,7 @@
-"use client"
+'use client'
+
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,8 +11,24 @@ import loginImage from "@/public/images/vnos.jpg";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const login = formData.get('login') as string
+    const password = formData.get('password') as string
 
+   if (login === 'admin' && password === '123') {
+  console.log("Авторизация успешна, устанавливаем cookie");
+  document.cookie = "isLoggedIn=true; path=/;";
+  console.log("Редирект на главную страницу...");
+  router.push('/');
+} else {
+  setError("Неверный логин или пароль.");
+}
+
+  }
   return (
     <div className="flex min-h-screen">
       {/* Логин форма */}
@@ -22,12 +40,12 @@ export default function LoginPage() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
           <div className="space-y-2">
-            <Label htmlFor="login">Логин</Label>
-            <Input id="login" name="login" placeholder="admin" required />
+          <Label htmlFor="login" className="text-blue-600 font-semibold">Логин</Label>
+          <Input id="login" name="login" placeholder="admin" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Пароль</Label>
-            <Input id="password" name="password" type="password" required />
+          <Label htmlFor="password" className="text-blue-600 font-semibold">Пароль</Label>
+          <Input id="password" name="password" type="password" required />
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">

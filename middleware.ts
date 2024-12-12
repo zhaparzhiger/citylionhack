@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const isLoggedIn = request.cookies.get('isLoggedIn')
-
-  if (!isLoggedIn && request.nextUrl.pathname !== '/login') {
-    return NextResponse.redirect(new URL('/login', request.url))
+  // Проверяем, если на главной странице, то нужно перенаправить, если нет авторизации
+  if (request.nextUrl.pathname === '/' && !request.cookies.get('isLoggedIn')) {
+    // Редиректим на страницу логина, если не авторизован
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next()
