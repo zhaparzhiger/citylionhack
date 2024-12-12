@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Layout } from "@/components/layout"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MapPin, Search, ArrowRight, Building, Car, Bus, Calendar, Plus } from 'lucide-react'
+import { MapPin, Search, ArrowRight, Building, Car, Bus, Calendar, Plus, DollarSign, Shield, Clock } from 'lucide-react'
 import Link from "next/link"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -19,10 +19,14 @@ interface CategoryPageProps {
     description: string
     type: 'place' | 'event' | 'transport'
     date?: string
+    spots?: number
+    status?: 'PAID' | 'FREE'
+    guarded?: boolean
     [key: string]: any
   }>
   category_type: 'events' | 'news' | 'parking'
 }
+
 
 export function CategoryPage({ title, items, category_type }: CategoryPageProps) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -177,38 +181,72 @@ export function CategoryPage({ title, items, category_type }: CategoryPageProps)
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-2xl p-6 flex flex-col gap-4 hover:shadow-lg transition-shadow duration-200"
+                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200"
               >
-                <div className="flex items-center gap-4">
-                  <div className="shrink-0">
-                    <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-[#427cf8]" />
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-semibold text-gray-900 truncate">
-                      {item.title}
-                    </h3>
-                    {item.date && (
-                      <p className="text-sm text-gray-500 mt-1">
-                        {item.date}
-                      </p>
-                    )}
+                <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-500">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Icon className="h-24 w-24 text-white opacity-50" />
                   </div>
                 </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="shrink-0">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Icon className="h-6 w-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-gray-900 truncate">
+                        {item.title}
+                      </h3>
+                      {item.date && (
+                        <p className="text-sm text-gray-500 mt-1 flex items-center">
+                          <Clock className="h-4 w-4 mr-1" />
+                          {item.date}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                <p className="text-base text-gray-600 line-clamp-2">
-                  {item.description}
-                </p>
+                  <p className="text-base text-gray-600 mb-4 line-clamp-2">
+                    {item.description}
+                  </p>
 
-                <Button
-                  variant="ghost"
-                  className="self-start h-12 px-6 text-[#427cf8] hover:text-[#427cf8] hover:bg-blue-50 rounded-full gap-2"
-                >
-                  <span className="text-lg font-medium">Подробнее</span>
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
+                  {category_type === 'parking' && (
+                    <div className="mb-4 space-y-2">
+                      <p className="text-sm text-gray-600 flex items-center">
+                        <Car className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Места:</span> {item.spots}
+                      </p>
+                      <p className="text-sm text-gray-600 flex items-center">
+                        <DollarSign className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Статус:</span> 
+                        <span className={`ml-1 px-2 py-1 rounded-full text-xs ${
+                          item.status === 'PAID' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                        }`}>
+                          {item.status}
+                        </span>
+                      </p>
+                      <p className="text-sm text-gray-600 flex items-center">
+                        <Shield className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Охрана:</span> 
+                        <span className={`ml-1 px-2 py-1 rounded-full text-xs ${
+                          item.guarded ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {item.guarded ? 'Да' : 'Нет'}
+                        </span>
+                      </p>
+                    </div>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    className="w-full h-12 px-6 text-blue-600 hover:bg-blue-50 rounded-full gap-2 transition-colors duration-200"
+                  >
+                    <span className="text-lg font-medium">Подробнее</span>
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             )
           })}
