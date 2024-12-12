@@ -25,7 +25,7 @@ model News {
   title       String
   description String
   date        DateTime
-  photoImg    String
+  photoImg   String @default("tmp.png")
   default     Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -35,6 +35,6 @@ model Events {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  date        DateTime
-  photoImg    String
+  date        DateTime 
+  photoImg    String @default("tmp.png")
 }

@@ -1,4 +1,4 @@
-import { CategoryPage } from "@/components/category-page"
+import { CategoryPage } from "@/components/category-page";
 import { getAllEvents } from "@/lib/services/events.service"
 
 const eventItems = [
@@ -15,5 +15,5 @@ export default async function EventsPage() {
     date: event.date.toISOString(), 
   }));
 
-  return <CategoryPage title="События" items={formattedEvents} />;
+  return <CategoryPage title="События" items={formattedEvents} category_type="events" />;
 }

@@ -13,6 +13,6 @@ export default async function ParkingPage() {
     ...event,
   }));
 
-  return <CategoryPage title="Парковки" items={formattedNews} />
+  return <CategoryPage title="Парковки" items={formattedNews} category_type="parking" />
 }
 

@@ -16,6 +16,6 @@ export default async function NewsPage() {
   }));
 
 
-  return <CategoryPage title="Новости" items={formattedNews} />
+  return <CategoryPage title="Новости" items={formattedNews} category_type="news" />
 }
 

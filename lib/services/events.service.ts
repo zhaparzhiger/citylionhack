@@ -24,7 +24,7 @@ export async function createEvent(data: {
   title: string;
   description: string;
   date: Date;
-  photoImg: string;
+  photoImg?: string;
 }) {
   try {
     return await prisma.events.create({

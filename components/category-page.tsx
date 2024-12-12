@@ -4,8 +4,12 @@ import { useState } from "react"
 import { Layout } from "@/components/layout"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MapPin, Search, ArrowRight, Building, Car, Bus, Calendar } from 'lucide-react'
+import { MapPin, Search, ArrowRight, Building, Car, Bus, Calendar, Plus } from 'lucide-react'
 import Link from "next/link"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal)
 
 interface CategoryPageProps {
   title: string
@@ -17,9 +21,10 @@ interface CategoryPageProps {
     date?: string
     [key: string]: any
   }>
+  category_type: 'events' | 'news' | 'parking'
 }
 
-export function CategoryPage({ title, items }: CategoryPageProps) {
+export function CategoryPage({ title, items, category_type }: CategoryPageProps) {
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredItems = items.filter(item =>
@@ -40,12 +45,118 @@ export function CategoryPage({ title, items }: CategoryPageProps) {
     }
   }
 
+  const handleCreate = async () => {
+    let formFields = []
+
+    switch (category_type) {
+      case 'events':
+        formFields = ['title', 'description', 'date']
+        break
+      case 'news':
+        formFields = ['title', 'description', 'date']
+        break
+      case 'parking':
+        formFields = ['title', 'spots', 'status', 'guarded']
+        break
+      default:
+        formFields = ['title', 'description']
+    }
+
+    const { value: formValues } = await MySwal.fire({
+      title: 'Создать новый элемент',
+      html: `
+        <form id="createForm">
+          ${formFields.map(field => {
+            if (field === 'status') {
+              return `
+                <select id="${field}" class="swal2-input">
+                  <option value="PAID">PAID</option>
+                  <option value="FREE">FREE</option>
+                </select>
+              `
+            } else if (field === 'guarded') {
+              return `
+                <div class="swal2-checkbox-container">
+                  <input type="checkbox" id="${field}" class="swal2-checkbox">
+                  <label for="${field}">Guarded</label>
+                </div>
+              `
+            } else if (field === 'date') {
+              return `<input id="${field}" type="date" class="swal2-input">`
+            } else {
+              return `<input id="${field}" class="swal2-input" placeholder="${field.charAt(0).toUpperCase() + field.slice(1)}">`
+            }
+          }).join('')}
+        </form>
+      `,
+      focusConfirm: false,
+      preConfirm: () => {
+        return formFields.reduce((acc, field) => {
+          if (field === 'guarded') {
+            acc[field] = (document.getElementById(field) as HTMLInputElement).checked
+          } else if (field === 'spots') {
+            acc[field] = parseInt((document.getElementById(field) as HTMLInputElement).value, 10)
+          } else if (field === 'date') {
+            acc[field] = new Date((document.getElementById(field) as HTMLInputElement).value)
+          } else {
+            acc[field] = (document.getElementById(field) as HTMLInputElement).value
+          }
+          return acc
+        }, {} as Record<string, any>)
+      }
+    })
+
+    if (formValues) {
+      try {
+        let response
+        switch (category_type) {
+          case 'events':
+            response = await fetch('/api/events', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formValues)
+            })
+            break
+          case 'news':
+            response = await fetch('/api/news', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formValues)
+            })
+            break
+          case 'parking':
+            response = await fetch('/api/parking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formValues)
+            })
+            break
+        }
+
+        if (response && response.ok) {
+          MySwal.fire('Успешно!', 'Новый элемент был создан.', 'success')
+        } else {
+          throw new Error('Failed to create item')
+        }
+      } catch (error) {
+        console.error('Error creating item:', error)
+        MySwal.fire('Ошибка!', 'Не удалось создать элемент.', 'error')
+      }
+    }
+  }
+
   return (
     <Layout>
       <div className="max-w-[1400px] mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
-          <p className="text-xl text-gray-600">Исследуйте город и найдите интересные места и события.</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
+            <p className="text-xl text-gray-600">Исследуйте город и найдите интересные места и события.</p>
+          </div>
+          <Button onClick={handleCreate} className="h-12 px-6 rounded-full gap-2 bg-[#427cf8] text-white hover:bg-[#3b6fe0]">
+            <Plus className="h-5 w-5" />
+            <span className="text-lg font-medium">Создать</span>
+          </Button>
         </div>
 
         <div className="mb-8">
