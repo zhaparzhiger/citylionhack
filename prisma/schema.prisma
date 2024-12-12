@@ -17,3 +17,11 @@ model News {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Events {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime
+  photoImg    String
+}
